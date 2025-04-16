@@ -110,11 +110,19 @@ $(function () {
     });
 
     // Hide card
-    $card.find(".hide-btn").on("click", function () {
-      card.hidden = true;
-      localStorage.setItem("cards", JSON.stringify(cards));
-      renderCards();
-    });
+    // Hide card
+$card.find(".hide-btn").on("click", function () {
+  if (card.keep) {
+    card.hidden = false;
+    card.keep = false;
+  } else {
+    card.hidden = true;
+  }
+
+  localStorage.setItem("cards", JSON.stringify(cards));
+  renderCards();
+});
+
 
     // add keep for hidden cards
     if (card.hidden) {
@@ -199,7 +207,7 @@ $(function () {
   // Show hidden cards and toggle "keep" logic
   $showHiddenBtn.on("click", function () {
     if (!showingHidden) {
-      // Показываем скрытые карточки
+      //shows hidden cards
       showingHidden = true;
       $showHiddenBtn.text("Hide Unchecked");
   
@@ -211,24 +219,24 @@ $(function () {
       });
   
     } else {
-      // hide any without keep
+      //hide all without keep
       showingHidden = false;
       $showHiddenBtn.text("Show Hidden");
-  
+
       cards.forEach(card => {
-        const $el = $grid.find(`.card[data-id="${card.id}"]`);
-  
-        if (card.hidden && !card.keep) {
-          $el.remove(); // remove card
-        } else {
-          $el.find(".keep-label").remove(); //remove check-box
+        if (card.hidden) {
+          if (card.keep) {
+            // makes hidden card ussual
+            card.hidden = false;
+          }
+          card.keep = false;
         }
-  
-        card.keep = false; //restore card
       });
-  
+
       localStorage.setItem("cards", JSON.stringify(cards));
+      renderCards();
     }
+
   });
   
 
